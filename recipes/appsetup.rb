@@ -1,5 +1,5 @@
 node[:deploy].each do |app_name, deploy|
-
+ # ss config
   template "#{deploy[:deploy_to]}/current/mysite/_config.php" do
     source "_config.php.erb"
     mode 0660
@@ -24,4 +24,33 @@ node[:deploy].each do |app_name, deploy|
      File.directory?("#{deploy[:deploy_to]}/current")
    end
   end
+  
+  # ss .htaccess
+  template "#{deploy[:deploy_to]}/current/.htaccess" do
+    source ".htaccess.erb"
+    mode 0660
+    group deploy[:group]
+
+    if platform?("ubuntu")
+      owner "www-data"
+    elsif platform?("amazon")   
+      owner "apache"
+    end
+
+   only_if do
+     File.directory?("#{deploy[:deploy_to]}/current")
+   end
+  end
+  
+  # assets dir must be writable
+  directory "#{deploy[:deploy_to]}/current/assets" do
+	if platform?("ubuntu")
+      owner "www-data"
+    elsif platform?("amazon")   
+      owner "apache"
+    end
+	mode 0777
+	action :modify
+  end
+  
 end
