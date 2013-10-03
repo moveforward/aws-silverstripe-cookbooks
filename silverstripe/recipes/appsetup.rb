@@ -50,7 +50,7 @@ node[:deploy].each do |app_name, deploy|
       owner "apache"
     end
 	mode 0777
-	action :modify
+	action :create
   end
   
 end
